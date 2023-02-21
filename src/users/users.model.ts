@@ -9,6 +9,7 @@ export class User extends Document {
     required: [true, 'Add email'],
   })
   email: string;
+
   @Prop({
     type: String,
     required: [true, 'Add valid password'],

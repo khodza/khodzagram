@@ -36,6 +36,14 @@ export class UsersService {
       throw new BadRequestException(err);
     }
   }
+  async findUserByEmail(email: string): Promise<User> {
+    try {
+      const user = await this.userModel.findOne({ email });
+      return user;
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
+  }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
