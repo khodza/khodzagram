@@ -10,6 +10,7 @@ import {
   Catch,
   UseGuards,
   Request,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,6 +19,9 @@ import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+import { ReqWithUser } from './interfaces/reqWithUser.interfsce';
+import { User } from './users.model';
+
 @Controller('users')
 export class UsersController {
   constructor(
@@ -25,9 +29,15 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
+  @Post('signup')
+  async signup(@Body() reqUser: CreateUserDto) {
+    const user = await this.usersService.create(reqUser);
+    return this.authService.login(user);
+  }
+
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  login(@Request() req: any) {
+  login(@Request() req: ReqWithUser) {
     return this.authService.login(req.user);
   }
 

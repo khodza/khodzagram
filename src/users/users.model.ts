@@ -1,6 +1,7 @@
 // import * as mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import * as bycypt from 'bcrypt';
 
 @Schema()
 export class User extends Document {
@@ -33,10 +34,13 @@ export class User extends Document {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-// UserSchema.pre('save', function (next) {
-//   console.log('A user is about to be saved');
-//   if (this.isModified('password' || this.isNew)) next();
-// });
+UserSchema.pre('save', async function (next) {
+  if (this.isModified('password') || this.isNew) {
+    this.password = await bycypt.hash(this.password, 10);
+    this.confirmPassword = undefined;
+  }
+  next();
+});
 
 // export const UserSchema = new mongoose.Schema({
 //   email: {
