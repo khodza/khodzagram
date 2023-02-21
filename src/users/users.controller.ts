@@ -1,45 +1,22 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
   Delete,
-  UseFilters,
-  Catch,
   UseGuards,
   Request,
-  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
-import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-
-import { ReqWithUser } from './interfaces/reqWithUser.interfsce';
-import { User } from './users.model';
+import { RoleGuard } from 'src/auth/guards/role.auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private authService: AuthService,
-  ) {}
-
-  @Post('signup')
-  async signup(@Body() reqUser: CreateUserDto) {
-    const user = await this.usersService.create(reqUser);
-    return this.authService.login(user);
-  }
-
-  @UseGuards(LocalAuthGuard)
-  @Post('login')
-  login(@Request() req: ReqWithUser) {
-    return this.authService.login(req.user);
-  }
+  constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
@@ -47,27 +24,30 @@ export class UsersController {
     return req.user;
   }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Get()
-  findAll() {
+  @Roles('admin')
+  findAllUsers(@Request() req) {
     return this.usersService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Get(':id')
+  @Roles('admin')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+    return this.usersService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Patch(':id')
+  @Roles('admin')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Delete(':id')
+  @Roles('admin')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }

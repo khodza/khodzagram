@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
-import { Mode } from 'fs';
 @Injectable()
 export class UsersService {
   constructor(
@@ -28,7 +27,7 @@ export class UsersService {
     }
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: string): Promise<User> {
     try {
       const user = await this.userModel.findById(id);
       return user;
@@ -45,7 +44,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     try {
       const user = await this.userModel.findByIdAndUpdate(id);
       return user;

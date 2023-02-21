@@ -2,11 +2,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as bycypt from 'bcrypt';
-
+import { Role } from 'src/auth/roles.model';
 @Schema()
 export class User extends Document {
   @Prop({
     type: String,
+    // unique:true,
     required: [true, 'Add email'],
   })
   email: string;
@@ -30,6 +31,19 @@ export class User extends Document {
   })
   confirmPassword: string;
   required: [true, 'Please confirm your password'];
+
+  @Prop({
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user',
+  })
+  role: string;
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
+
+  @Prop({ default: Date.now })
+  updatedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

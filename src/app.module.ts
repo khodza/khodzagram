@@ -8,6 +8,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 import { AuthService } from './auth/auth.service';
 import { jwtConstance } from './auth/constants/jwt-constants';
+import { AuthController } from './auth/auth.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({

@@ -8,12 +8,13 @@ import { LocalStrategy } from 'src/auth/strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstance } from 'src/auth/constants/jwt-constants';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
+import { AuthController } from 'src/auth/auth.controller';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     JwtModule.registerAsync(jwtConstance),
   ],
-  controllers: [UsersController],
+  controllers: [AuthController, UsersController],
   providers: [UsersService, AuthService, LocalStrategy, JwtStrategy],
 })
 export class UsersModule {}
