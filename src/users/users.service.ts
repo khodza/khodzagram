@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -38,6 +39,9 @@ export class UsersService {
   async findUserByEmail(email: string): Promise<User> {
     try {
       const user = await this.userModel.findOne({ email });
+      if (!user) {
+        throw new BadRequestException(`No user with this email ${email}`);
+      }
       return user;
     } catch (err) {
       throw new BadRequestException(err);
@@ -46,7 +50,7 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
-      const user = await this.userModel.findByIdAndUpdate(id);
+      const user = await this.userModel.findByIdAndUpdate(id, updateUserDto);
       return user;
     } catch (err) {
       throw new BadRequestException(err);

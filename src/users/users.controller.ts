@@ -7,6 +7,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -29,6 +30,13 @@ export class UsersController {
   @Roles('admin')
   findAllUsers(@Request() req) {
     return this.usersService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Get('search-by-email')
+  @Roles('user')
+  findOneByEmail(@Query() email) {
+    return this.usersService.findUserByEmail(email.email);
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard)
