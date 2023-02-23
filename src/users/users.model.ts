@@ -1,4 +1,3 @@
-// import * as mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as bycypt from 'bcrypt';
@@ -54,31 +53,3 @@ UserSchema.pre('save', async function (next) {
   }
   next();
 });
-
-// export const UserSchema = new mongoose.Schema({
-//   email: {
-//     type: String,
-//     required: [true, 'Add email'],
-//   },
-// password: {
-//   type: String,
-//   required: [true, 'Add valid password'],
-// },
-//   confirmPassword: {
-//     type: String,
-//     required: [true, 'Please confirm your password'],
-//     // Works only on .crate and .save
-//     validate: {
-//       validator(el) {
-//         return el === this.password;
-//       },
-//       message: 'Passwords are not same',
-//     },
-//   },
-// });
-
-// export interface User {
-//   email: string;
-//   password: string;
-//   confirmPassword: string;
-// }

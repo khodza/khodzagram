@@ -18,7 +18,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
@@ -28,7 +27,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Get()
   @Roles('admin')
-  findAllUsers(@Request() req) {
+  findAllUsers() {
     return this.usersService.findAll();
   }
 
