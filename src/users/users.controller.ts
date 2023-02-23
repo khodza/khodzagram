@@ -18,6 +18,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
@@ -34,8 +35,8 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Get('search-by-email')
   @Roles('user')
-  findOneByEmail(@Query() email) {
-    return this.usersService.findUserByEmail(email.email);
+  findOneByEmail(@Query() query) {
+    return this.usersService.findUserByEmail(query.email);
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard)
@@ -56,6 +57,7 @@ export class UsersController {
   @Delete(':id')
   @Roles('admin')
   remove(@Param('id') id: string) {
+    console.log('object');
     return this.usersService.remove(+id);
   }
 }

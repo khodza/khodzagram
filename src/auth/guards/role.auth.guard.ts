@@ -25,7 +25,7 @@ export class RoleGuard extends AuthGuard('jwt') {
     }
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const authorized = requiredRoles.some((role) => user.role?.includes(role));
+    const authorized = requiredRoles.some((role) => user.roles?.includes(role));
     if (!authorized) {
       throw new UnauthorizedException(
         `You are not authorized to access this resource.`,

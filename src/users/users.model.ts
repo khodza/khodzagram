@@ -31,11 +31,11 @@ export class User extends Document {
   required: [true, 'Please confirm your password'];
 
   @Prop({
-    type: String,
-    enum: ['user', 'admin'],
+    type: [String],
+    enum: ['user', 'admin','superAdmin'],
     default: 'user',
   })
-  role: string;
+  roles: string[];
 
   @Prop({ default: Date.now })
   createdAt: Date;
