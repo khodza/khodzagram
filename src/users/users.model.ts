@@ -5,14 +5,20 @@ import * as bycypt from 'bcrypt';
 export class User extends Document {
   @Prop({
     type: String,
-    unique: true,
     required: [true, 'Add email'],
   })
   email: string;
 
   @Prop({
     type: String,
+    required: [true, 'Add username'],
+  })
+  username: string;
+
+  @Prop({
+    type: String,
     required: [true, 'Add valid password'],
+    select: false,
   })
   password: string;
 
@@ -32,7 +38,7 @@ export class User extends Document {
 
   @Prop({
     type: [String],
-    enum: ['user', 'admin','superAdmin'],
+    enum: ['user', 'admin', 'superAdmin'],
     default: 'user',
   })
   roles: string[];
@@ -45,6 +51,35 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+//CREATING INDEXES TO MAKE EMAIL AND USERNAME UNIQUE
+
+UserSchema.index(
+  { email: 1 },
+  { unique: true, collation: { locale: 'en', strength: 2 } },
+);
+UserSchema.index(
+  { username: 1 },
+  { unique: true, collation: { locale: 'en', strength: 2 } },
+);
+
+//HANDLING DUBLICATE ERRORS
+
+UserSchema.post('save', function (error, doc, next) {
+  if (error.code === 11000) {
+    if (error.keyPattern.email) {
+      next(new Error('Email address already exists'));
+    } else if (error.keyPattern.username) {
+      next(new Error('Username already exists'));
+    } else {
+      next(error);
+    }
+  } else {
+    next(error);
+  }
+});
+
+//HASHING PASSWORD
 
 UserSchema.pre('save', async function (next) {
   if (this.isModified('password') || this.isNew) {
