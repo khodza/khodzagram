@@ -63,9 +63,9 @@ UserSchema.index(
   { unique: true, collation: { locale: 'en', strength: 2 } },
 );
 
-//HANDLING DUBLICATE ERRORS
+//HANDLING DUPLICATE FIELD ERRORS
 
-UserSchema.post('save', function (error, doc, next) {
+UserSchema.post(['save','updateOne'], function (error, doc, next) {
   if (error.code === 11000) {
     if (error.keyPattern.email) {
       next(new Error('Email address already exists'));

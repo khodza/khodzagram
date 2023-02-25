@@ -16,6 +16,7 @@ import { RoleGuard } from 'src/auth/guards/role.auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { giveAdminDto } from './dto/give-admin.dto';
+import { updatePassword } from './dto/update-password.dto';
 
 @Controller('users')
 export class UsersController {
@@ -35,6 +36,21 @@ export class UsersController {
   findOneByEmail(@Query() query) {
     return this.usersService.findUserByEmail(query.email);
   }
+
+  //UPDATE LOGGED IN USER 
+  @UseGuards(JwtAuthGuard)
+  @Patch('update-me')
+  updateLoggedUser( @Request() req, @Body() updateOptions: UpdateUserDto){
+    return this.usersService.update(req.user.userId,updateOptions)
+  }
+
+  //UPDATE MY PASSWORD
+  @UseGuards(JwtAuthGuard)
+  @Patch('update-my-password')
+  updatePasswordOfCurrentUser(@Request() req ,@Body() passwordsOpt:updatePassword ){
+    return this.usersService.updatePassword(req.user.userId,passwordsOpt)
+  }
+
 
   //ADMIN ROUTES
 
@@ -58,11 +74,11 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Patch(':id')
   @Roles('admin')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(@Param('id') id: string, @Body() updateOptions: UpdateUserDto) {
+    return this.usersService.update(id, updateOptions);
   }
 
-  //DELTEE USER
+  //DELETE USER
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Delete(':id')
   @Roles('admin')
@@ -70,7 +86,7 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
-  //SUPERADMIN ROUTES
+  //SUPER-ADMIN ROUTES
 
   //GIVE ADMIN
   @UseGuards(JwtAuthGuard, RoleGuard)

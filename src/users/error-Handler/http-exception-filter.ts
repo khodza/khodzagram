@@ -8,7 +8,7 @@
 //         const ctx = host.switchToHttp();
 //         const response = ctx.getResponse<Response>();
 //         const status = exception.getStatus();
-//         const response =exception
+//         const message =exception.message
 //         response.status(status).json({
 //         statusCode: status,
 //         message,

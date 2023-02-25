@@ -5,12 +5,12 @@ export class CreateUserDto {
   username: string;
 
   @Transform(({ value }) => value.toLowerCase())
-  @IsEmail()
+  @IsEmail({},{message:'Provide valid email'})
   email: string;
 
-  @IsString()
+  @IsString({message:'Provide valid password'})
   password: string;
 
-  @IsString()
+  @IsString({message:'Confirm your password'})
   confirmPassword: string;
 }
