@@ -1,8 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import * as mongoose  from 'mongoose'
 import * as bycypt from 'bcrypt';
-@Schema()
+@Schema({timestamps:true,toJSON:{transform: function(doc,ret){
+  delete ret.password;
+  delete ret.__v;
+}}})
 export class User extends Document {
+  
   @Prop({
     type: String,
     required: [true, 'Add email'],
@@ -18,7 +23,6 @@ export class User extends Document {
   @Prop({
     type: String,
     required: [true, 'Add valid password'],
-    select: false,
   })
   password: string;
 
@@ -43,11 +47,8 @@ export class User extends Document {
   })
   roles: string[];
 
-  @Prop({ default: Date.now })
-  createdAt: Date;
-
-  @Prop({ default: Date.now })
-  updatedAt: Date;
+  @Prop([{type:mongoose.Schema.Types.ObjectId,ref:'Post'}])
+  posts:Array<mongoose.Schema.Types.ObjectId>
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

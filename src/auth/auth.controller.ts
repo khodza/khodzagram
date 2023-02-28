@@ -7,7 +7,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 export class AuthController {
   constructor(
     private readonly usersService: UsersService,
-    private authService: AuthService,
+    private readonly authService: AuthService,
   ) {}
 
   //SIGN UP

@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/users.model';
 import { UsersService } from '../users/users.service';
 import * as bycypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
   }
 
   async login(user: User ): Promise<{ access_token: string }> {
-    const payload = { userId: user.id, email: user.email, roles: user.roles };
+    const payload = { userId: user._id, roles: user.roles };
     const token = this.jwtService.sign(payload);
     return {
       access_token: token,

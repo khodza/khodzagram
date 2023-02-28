@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, ObjectId } from 'mongoose';
+import  { Model } from 'mongoose';
+import * as mongoose from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
@@ -26,23 +27,27 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     try {
-      const Users = await this.userModel.find();
-      return Users;
+      const users = await this.userModel.find();
+      return users;
     } catch (err) {
       throw new BadRequestException(err);
     }
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: mongoose.Types.ObjectId,SelFields?:string,popFields?:string): Promise<User> {
     try {
-      if (!mongoose.Types.ObjectId.isValid(id)){
-        throw new BadRequestException('Provide valid ID')
+      let user = this.userModel.findById(id);
+      if(SelFields){
+        user.select(SelFields)
+     }
+      if(popFields){
+         user.populate(popFields,'-author')
       }
-      const user = await this.userModel.findById(id);
-      if (!user) {
+      const readyUser = await user
+      if (!readyUser) {
         throw new BadRequestException(`No user with this ID : ${id}`);
       }
-      return user;
+      return readyUser;
     } catch (err) {
       throw new BadRequestException(err.message,err);
     }
@@ -60,23 +65,20 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateOptions: UpdateUserDto) {
+  async update(id: mongoose.Types.ObjectId, updateOptions: UpdateUserDto) {
     try {
-      if (!mongoose.Types.ObjectId.isValid(id)){
-        throw new BadRequestException('Provide valid ID')
+      const update = await this.userModel.updateOne({_id:id}, updateOptions,{runValidators:true});
+      if (!update) {
+        throw new BadRequestException(`No user with this id ${id}`);
       }
-      await this.userModel.updateOne({_id:id}, updateOptions,{runValidators:true});
       const user =await this.findOne(id)
-      if (!user) {
-        throw new BadRequestException(`No user with this email ${id}`);
-      }
       return user;
     } catch (err) {
       throw new BadRequestException(err.message,err);
     }
   }
 
-  async updatePassword(id:string,passwordsOpt:updatePassword){
+  async updatePassword(id:mongoose.Types.ObjectId,passwordsOpt:updatePassword){
     try{
       const user = await this.userModel.findById(id).select('password')
       if (user && (await bycypt.compare(passwordsOpt.oldPassword, user.password))) {
@@ -92,11 +94,8 @@ export class UsersService {
     
   }
 
-  async remove(id: string): Promise<{message:string}> {
+  async remove(id: mongoose.Types.ObjectId): Promise<{message:string}> {
     try {
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new BadRequestException(`Provide valid ID: ${id}`);
-      }
       const deletedUser = await this.userModel.findByIdAndDelete(id);
       if (!deletedUser) {
         throw new BadRequestException(`No user with this ID : ${id}`);

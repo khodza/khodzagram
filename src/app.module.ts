@@ -9,6 +9,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { AuthService } from './auth/auth.service';
 import { jwtConstance } from './auth/constants/jwt-constants';
 import { AuthController } from './auth/auth.controller';
+import { PostsModule } from './posts/posts.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,6 +24,7 @@ import { AuthController } from './auth/auth.controller';
       }),
       inject: [ConfigService],
     }),
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -17,6 +17,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { giveAdminDto } from './dto/give-admin.dto';
 import { updatePassword } from './dto/update-password.dto';
+import { getMongoDbId } from './dto/mongodbID.dto';
 
 @Controller('users')
 export class UsersController {
@@ -66,24 +67,25 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Get(':id')
   @Roles('admin')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  findOne(@Param() params: getMongoDbId) {
+
+    return this.usersService.findOne(params.id,null,'posts');
   }
 
   //UPDATE USER
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Patch(':id')
   @Roles('admin')
-  update(@Param('id') id: string, @Body() updateOptions: UpdateUserDto) {
-    return this.usersService.update(id, updateOptions);
+  update(@Param() params: getMongoDbId, @Body() updateOptions: UpdateUserDto) {
+    return this.usersService.update(params.id, updateOptions);
   }
 
   //DELETE USER
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Delete(':id')
   @Roles('admin')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  remove(@Param() params: getMongoDbId) {
+    return this.usersService.remove(params.id);
   }
 
   //SUPER-ADMIN ROUTES

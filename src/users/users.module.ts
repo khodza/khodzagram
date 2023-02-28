@@ -25,5 +25,6 @@ import { AuthController } from 'src/auth/auth.controller';
     // {provide:APP_FILTER,useClass:HttpExceptionFilter},
     // { provide: APP_PIPE, useValue: new ValidationPipe({ whitelist: true }) },
   ],
+  exports:[UsersService]
 })
 export class UsersModule {}
